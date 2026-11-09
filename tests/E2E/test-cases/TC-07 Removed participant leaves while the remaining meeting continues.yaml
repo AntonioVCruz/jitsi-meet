@@ -50,7 +50,10 @@ customSteps: |
     wait up to 30 seconds until page contains stored value from "survivalMessage"
     jitsi-leave-conference
     switch to browser "default"
-    jitsi-leave-conference
+    // Leave the final room URL explicitly; post-hangup routing is not the removal outcome.
+    reset to home
+    wait up to 30 seconds until page contains button "Start meeting"
+    check that page contains button "Start meeting"
     switch to browser "Removed"
     reset to home
     wait up to 30 seconds until page contains button "Start meeting"
