@@ -50,11 +50,14 @@ config.disableInitialGUM = true;
 config.startWithAudioMuted = true;
 config.startWithVideoMuted = true;
 config.showPollSingleAnswerSetting = true;
+config.toolbarConfig = { ...config.toolbarConfig, alwaysVisible: true };
 ```
 
 For Docker, use the release's `web/custom-config.js` configuration hook and restart the web service after changing it.
 Preserve any existing custom configuration. The final flag exposes an optional poll control that is hidden by default;
 its absence in an unconfigured deployment is not an application defect. Verify the served configuration before running.
+The toolbar remains visible in this profile so cloud command timing does not hide controls between steps.
+These cases do not test toolbar auto-hide behavior.
 
 Use a dedicated Desktop Web suite and provide its supported token through the process environment. Do not commit
 credentials or change another project's saved CLI defaults. Check the installed CLI version and help before execution.
