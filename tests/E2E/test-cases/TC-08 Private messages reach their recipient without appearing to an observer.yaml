@@ -1,0 +1,60 @@
+customSteps: |
+    generate from regex "trprivate[a-z]{20}" and save as "roomName"
+    generate from regex "private[a-z]{24}" and save as "privateMessage"
+    generate from regex "before[a-z]{24}" and save as "beforeMessage"
+    generate from regex "after[a-z]{24}" and save as "afterMessage"
+    save value "TRSender" as "participantName"
+    jitsi-open-room
+    jitsi-join-conference
+    start browser "Recipient" and switch
+    reset to home
+    save value "TRRecipient" as "participantName"
+    jitsi-open-room
+    jitsi-join-conference
+    start browser "Observer" and switch
+    reset to home
+    save value "TRUninvolved" as "participantName"
+    jitsi-open-room
+    jitsi-join-conference
+    click "Open chat"
+    check that page does not contain stored value from "privateMessage"
+
+    switch to browser "Recipient"
+    hover over the middle of the screen
+    click "Open chat"
+    enter stored value "beforeMessage" into "Type a message"
+    click button "Send"
+    switch to browser "Observer"
+    wait up to 30 seconds until page contains stored value from "beforeMessage"
+    switch to browser "default"
+    hover over the middle of the screen
+    click "Open participants panel"
+    wait up to 30 seconds until page contains "TRRecipient"
+    // The roster row exposes the menu on hover; video tiles show the same name too.
+    hover over "TRRecipient" roughly below "Search participants"
+    click "More participant options"
+    click "Send private message"
+    enter stored value "privateMessage" into "Type a message"
+    click button "Send"
+    switch to browser "Recipient"
+    wait up to 30 seconds until page contains stored value from "privateMessage"
+    // Public messages bracket the private delivery to show the observer's chat is loaded and active.
+    enter stored value "afterMessage" into "Type a message"
+    click button "Send"
+    click button "Send to the group" if exists
+    switch to browser "Observer"
+    wait up to 30 seconds until page contains stored value from "afterMessage"
+    check that page contains stored value from "beforeMessage"
+    check that page does not contain stored value from "privateMessage"
+    jitsi-leave-conference
+    switch to browser "Recipient"
+    jitsi-leave-conference
+    switch to browser "default"
+    jitsi-leave-conference
+labels:
+    - jitsi-e2e
+    - jitsi-expansion
+    - jitsi-tc08
+    - jitsi-open-room
+    - jitsi-join-conference
+    - jitsi-leave-conference

@@ -1,0 +1,67 @@
+customSteps: |
+    generate from regex "trlobby[a-z]{20}" and save as "roomName"
+    generate from regex "admitted[a-z]{22}" and save as "admissionMessage"
+    save value "TRLobbyHost" as "participantName"
+    jitsi-open-room
+    jitsi-join-conference
+    jitsi-open-security
+    click "Enable lobby"
+    click "Close dialog"
+
+    start browser "LobbyGuest" and switch
+    reset to home
+    jitsi-open-room
+    enter "TRLobbyGuest" into "Enter your name"
+    click button "Join meeting"
+    click button "Ask to Join" if exists
+    wait up to 30 seconds until page contains "You'll join the meeting as soon as someone accepts your request"
+    switch to browser "default"
+    hover over the middle of the screen
+    click "Open participants panel"
+    wait up to 30 seconds until page contains "TRLobbyGuest"
+    // Lobby chat puts rejection inside the guest's moderation menu.
+    hover over "TRLobbyGuest" roughly below "Lobby (1)"
+    click "More moderation options TRLobbyGuest"
+    click "Reject TRLobbyGuest"
+    switch to browser "LobbyGuest"
+    wait up to 30 seconds until page contains "Your join request was rejected by a moderator."
+    // A later accepted request is the positive control for the same guest and same room.
+    reset to home
+    jitsi-open-room
+    enter "TRLobbyGuest" into "Enter your name"
+    click button "Join meeting"
+    click button "Ask to Join" if exists
+    wait up to 30 seconds until page contains "You'll join the meeting as soon as someone accepts your request"
+    switch to browser "default"
+    wait up to 30 seconds until page contains "TRLobbyGuest"
+    hover over "TRLobbyGuest" roughly below "Lobby (1)"
+    click "Admit TRLobbyGuest"
+    switch to browser "LobbyGuest"
+    wait up to 60 seconds until page does not contain "You'll join the meeting as soon as someone accepts your request"
+    hover over the middle of the screen
+    click "Open chat"
+    enter stored value "admissionMessage" into "Type a message"
+    click button "Send"
+    switch to browser "default"
+    hover over the middle of the screen
+    click "Close participants pane"
+    click "Open chat"
+    wait up to 30 seconds until page contains stored value from "admissionMessage"
+    // Cross-browser chat proves admission to the meeting, not only removal of the waiting screen.
+    click "Close chat"
+    jitsi-open-security
+    click "Enable lobby"
+    click button "Disable" if exists
+    click "Close dialog"
+    switch to browser "LobbyGuest"
+    jitsi-leave-conference
+    switch to browser "default"
+    jitsi-leave-conference
+labels:
+    - jitsi-e2e
+    - jitsi-expansion
+    - jitsi-tc06
+    - jitsi-open-room
+    - jitsi-join-conference
+    - jitsi-leave-conference
+    - jitsi-open-security

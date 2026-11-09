@@ -1,0 +1,52 @@
+customSteps: |
+    // Unique room and message values isolate this case from other meetings and prior messages.
+    generate from regex "tre2e[a-z]{20}" and save as "roomName"
+    generate from regex "message[a-z]{24}" and save as "chatMessage"
+    save value "TRHost" as "participantName"
+    jitsi-open-room
+    jitsi-join-conference
+
+    // A separate browser session is required to prove cross-participant delivery.
+    start browser "Guest" and switch
+    reset to home
+    save value "TRGuest" as "participantName"
+    jitsi-open-room
+    jitsi-join-conference
+    click "Open participants panel"
+    wait up to 30 seconds until page contains "TRHost"
+    check that page contains "TRHost"
+    click "Close participants pane"
+    click "Open chat"
+    check that page does not contain stored value from "chatMessage"
+
+    switch to browser "default"
+    hover over the middle of the screen
+    click "Open participants panel"
+    wait up to 30 seconds until page contains "TRGuest"
+    check that page contains "TRGuest"
+    click "Close participants pane"
+    click "Open chat"
+    enter stored value "chatMessage" into "Type a message"
+    click button "Send"
+
+    switch to browser "Guest"
+    wait up to 30 seconds until page contains stored value from "chatMessage"
+    check that page contains stored value from "chatMessage"
+    jitsi-leave-conference
+
+    // The remaining participant must observe the departure before leaving too.
+    switch to browser "default"
+    hover over the middle of the screen
+    click "Open participants panel"
+    wait up to 30 seconds until page does not contain "TRGuest"
+    check that page contains "TRHost"
+    check that page does not contain "TRGuest"
+    click "Close participants pane"
+    jitsi-leave-conference
+labels:
+    - jitsi-e2e
+    - jitsi-tc01
+    - jitsi-phase3-smoke
+    - jitsi-open-room
+    - jitsi-join-conference
+    - jitsi-leave-conference
