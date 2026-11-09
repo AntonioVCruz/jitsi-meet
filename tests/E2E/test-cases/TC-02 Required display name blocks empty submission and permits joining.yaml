@@ -1,0 +1,24 @@
+customSteps: |
+    generate from regex "trname[a-z]{20}" and save as "roomName"
+    save value "TRValidated" as "participantName"
+    jitsi-open-room
+
+    // Submit an empty name and verify that the rendered form remains blocked.
+    enter "" into "Enter your name"
+    click button "Join meeting"
+    check that button "Join meeting" is disabled
+    check that page contains "Enter your name"
+
+    // The same form must accept a valid name and actually enter the conference.
+    jitsi-join-conference
+    click "Open participants panel"
+    check that page contains "TRValidated"
+    click "Close participants pane"
+    jitsi-leave-conference
+labels:
+    - jitsi-e2e
+    - jitsi-tc02
+    - prejoin
+    - jitsi-open-room
+    - jitsi-join-conference
+    - jitsi-leave-conference
